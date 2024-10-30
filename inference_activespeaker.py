@@ -470,8 +470,13 @@ def save_video(output_tracks, input_frames, wav_file, result_folder):
 			bbox = output_tracks[i]
 			x1, y1, x2, y2 = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
 			out = cv2.rectangle(input_frames[i].copy(), (x1, y1), (x2, y2), color=[0, 255, 0], thickness=3)
+			# mask all but the box with black color
+			mask = np.zeros_like(input_frames[i])
+			mask[y1+5:y2-5, x1+5:x2-5] = 1  # Add 5px margin on each side
+			out = input_frames[i] * mask + cv2.addWeighted(input_frames[i], 0, mask, 1, 0) * (1-mask)
 		else:
-			out = input_frames[i]		
+			# black frame
+			out = np.zeros_like(input_frames[i])
 
 		output_frames.append(out)
 
@@ -504,8 +509,6 @@ def resample_video(video_file, video_fname, result_folder):
 	call(cmd)
 
 	return video_file_25fps
-
-
 
 if __name__ == "__main__":
 

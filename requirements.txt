@@ -6,13 +6,13 @@ numpy==1.26.4
 opencv-python==4.9.0.80
 opencv-python-headless==4.10.0.84
 protobuf==3.20.3
-protobuf-to-dict==0.1.0
-protobuf3-to-dict==0.1.5
+protobuf-to-dict
+protobuf3-to-dict
 python_speech_features==0.6
 scenedetect==0.6.4
 scikit-learn==1.5.1
-torch==1.10.0
-torchvision==0.11.1
+torch
+torchvision
 tqdm==4.66.4
 ultralytics==8.2.70
 ultralytics-thop==2.0.0

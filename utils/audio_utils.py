@@ -36,7 +36,7 @@ def wav2filterbanks(wav, mel_basis=None):
 
     assert len(wav.shape) == 2, 'Need batch of wavs as input'
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    # device = 'cpu'
+    print("DEVICE: ", device)
     spect = torch.stft(wav,
                        n_fft=audio_opts['n_fft'],
                        hop_length=audio_opts['hop_length'],
@@ -45,13 +45,18 @@ def wav2filterbanks(wav, mel_basis=None):
                        center=True,
                        pad_mode='reflect',
                        normalized=False,
-                       onesided=True)  # b x F x T x 2
-    spect = spect[:, :, :-1, :]
+                       onesided=True,
+                       return_complex=True)  # b x F x T x 2
+    # spect = spect[:, :, :-1, :]
+    spect = spect[..., :-1]
 
     # ----- Log filterbanks --------------
     # mag spectrogram - # b x F x T
-    mag = power_spect = torch.norm(spect, dim=-1)
-    phase = torch.atan2(spect[..., 1], spect[..., 0])
+    # mag = power_spect = torch.norm(spect, dim=-1)
+    # phase = torch.atan2(spect[..., 1], spect[..., 0])
+    power_spect = torch.abs(spect) 
+    mag = power_spect # Replace torch.norm with torch.abs
+    phase = torch.angle(spect)  # Replace torch.atan2 with torch.angle
     if mel_basis is None:
         # Build a Mel filter
         mel_basis = torch.from_numpy(
